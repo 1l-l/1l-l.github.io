@@ -140,8 +140,10 @@ local fq = {
 
 module.Start = function(players)
 	message("Starting game.")
-	for _, v in pairs(players) do
-		table.insert(competitors, v)
+	if players then
+		for _, v in pairs(players) do
+			table.insert(competitors, v)
+		end
 	end
 	inProgress = true
 	repeat
