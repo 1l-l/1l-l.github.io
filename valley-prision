@@ -46,17 +46,18 @@ local AntiTaseConn
 function EnableAntiTase()
     AntiTaseConn = character.Humanoid:GetPropertyChangedSignal("PlatformStand"):Connect(function()
         if character.Humanoid.PlatformStand == true then
-            character.Humanoid.PlatformStand = false 
+            character.Humanoid.PlatformStand = false
+            character.Humanoid.AutoRotate = true
         end
     end)
 end
 
 -- Make solitary doors non collide
-function MakeSolitaryDoorsNonCollide()
+function MakeSolitaryDoorsNonCollide(bool)
     for _, SL in pairs(workspace.Solitary.Cells:GetChildren()) do
      for _, v in pairs(SL.Door.Door.DoorMain:GetDescendants()) do
          if v:IsA("Part") then
-                v.CanCollide = false
+                v.CanCollide = bool
             end
          end
     end
@@ -82,7 +83,7 @@ end
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Vally Prison Exploits",
+    Title = "Vally Prision Exploits",
     SubTitle = "V.1.0 BETA",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
@@ -107,8 +108,8 @@ end
 local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "" }),
     DroppedItems = Window:AddTab({ Title = "Dropped Items", Icon = "" }),
-    CuffedPlayer = Window:AddTab({ Title = "Cuffed Player", Icon = "" }),
     Experimental = Window:AddTab({ Title = "Experimental", Icon = "" }),
+    Other = Window:AddTab({ Title = "Other", Icon = "" }),
     Dev = Window:AddTab({ Title = "Dev", Icon = "" }),
 }
 
@@ -152,15 +153,7 @@ local AutoHealPlayersInput = Tabs.Main:Addinput("AutoHealPlayersInput", {
     Multi = false,
     Default = 1,
     Callback = function()
-        --AutoHealPlayersInput.Value
-    end
- })
-  local RemoveHealPlayersButton = Tabs.Main:Addinput("RemoveHealPlayersButton", {
-    Title = "Remove Auto Heal to Others",
-    Multi = false,
-    Default = 1,
-    Callback = function()
-        
+        AutoHealLoop(workspace.Players)
     end
  })
  ]]
@@ -183,7 +176,7 @@ local ToggleSelfHeal; ToggleSelfHeal = Tabs.Main:AddToggle("SelfHeal",{
 
 local ToggleAntiTase = Tabs.Main:AddToggle("AntiTase",{
     Title = "Anti Tase",
-    Description = "Prevents you from not being able to move when tased.",
+    Description = "Allows you to move around while tased.",
     Default = false,
     Callback = function(value)
         if value == true then
@@ -209,34 +202,6 @@ workspace.DroppedTools.ChildAdded:Connect(function(item)
     end)
 end)
 
---- CUFFED PLAYER TAB ---
-Tabs.CuffedPlayer:AddButton({
-    Title = "Eliminate",
-    Description = "Kills the cuffed player by teleporting them into the void.",
-    Callback = function()
-        
-    end
-})
-Tabs.CuffedPlayer:AddButton({
-    Title = "Solitary",
-    Description = "Puts the cuffed player into solitary.",
-    Callback = function()
-        
-    end
-})
-Tabs.CuffedPlayer:AddButton({
-    Title = "Glitch",
-    Description = "Teleports the cuffed player into the sky.",
-    Callback = function()
-        
-    end
-})
-Tabs.CuffedPlayer:AddButton({
-    Title = "Control",
-    Description = "This does nothing, but it's a possible feature I might add.",
-    Callback = function() end
-})
-
 --- EXPERIMENTAL ---
 Tabs.Experimental:AddButton({
     Title = "Grab Cuffs From Tutorial",
@@ -261,6 +226,20 @@ Tabs.Dev:AddButton({
     Title = "Remote Spy",
     Callback = function()
         loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-ADV-REMOTE-SPY-TOOL-232946"))()
+    end
+})
+
+--- OTHER ---
+local ToggleSolitaryDoors = Tabs.Other:AddToggle("Remove Solitary Door Collison",{
+    Title = "No Solitary Door Collison",
+    Description = "Used for putting cuffed players into solitary doors, you will still not be able to go through.",
+    Default = false,
+    Callback = function(value)
+        if value == true then
+            MakeSolitaryDoorsNonCollide(false)
+        else
+            MakeSolitaryDoorsNonCollide(true)
+        end
     end
 })
 
